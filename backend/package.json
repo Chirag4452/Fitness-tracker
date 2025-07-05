@@ -1,0 +1,14 @@
+{
+  "name": "fitness-tracker-backend",
+  "version": "1.0.0",
+  "description": "Backend API for fitness tracking platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
