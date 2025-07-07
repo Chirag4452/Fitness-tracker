@@ -5,6 +5,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/authMiddleware');
 
 router.post('/register', async (req,res) => {
     try{
@@ -26,6 +27,17 @@ router.post('/register', async (req,res) => {
     }
 });
 
+router.get('/profile', authMiddleware, async (req, res) => {
+    res.json({
+        message: 'Access granted!',
+        user: {
+            id: req.user._id,
+            username: req.user.username,
+            email: req.user.email
+        }
+    });
+});
+
 router.post('/login', async (req,res) => {
     try{
         const {username, password} = req.body;
@@ -39,11 +51,13 @@ router.post('/login', async (req,res) => {
             return res.status(400).json({message: 'Password incorrect'});
         }
 
-        const token = jwt.sign({
-            userId: user._id 
-        },
+        console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+        console.log('JWT_SECRET length:', process.env.JWT_SECRET?.length);
+        
+        const token = jwt.sign(
+        {userId: user._id },
         process.env.JWT_SECRET,
-        {expiresIn: '24hr'}
+        { expiresIn: '24hr'}
     );
 
     res.json({
@@ -55,6 +69,7 @@ router.post('/login', async (req,res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 
 
