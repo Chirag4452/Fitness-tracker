@@ -18,16 +18,16 @@ const userSchema = new mongoose.Schema({
     },
     profileInfo:{
         age:{
-            type: number,
+            type: Number,
             min: 13,
             max:120
         },
         weight:{
-            type: number,
+            type: Number,
             min:30
         },
         height:{
-            type:number,
+            type:Number,
             min: 100
         }
     }
