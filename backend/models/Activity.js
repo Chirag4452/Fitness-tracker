@@ -3,9 +3,9 @@ mongoose.connect(process.env.MONGODB_URI);
 
 const activitySchema = new mongoose.Schema({
     userID:{
-        type: number,
-        required: true,
-        unique: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     type:{
         type: String,
@@ -18,11 +18,11 @@ const activitySchema = new mongoose.Schema({
         min: 1
     },
     distance:{
-        type: number,
+        type: Number,
         min:0
     },
     caloriesBurned:{
-        type: number,
+        type: Number,
         min: 0
     },
     location:{

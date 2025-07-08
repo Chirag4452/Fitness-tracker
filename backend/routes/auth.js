@@ -42,7 +42,7 @@ router.post('/login', async (req,res) => {
     try{
         const {username, password} = req.body;
 
-        const user = await User.findOne({ username});
+        const user = await User.findOne({ username });
         if(!user){
             return res.status(400).json({message: 'User not found'});
         }
@@ -50,10 +50,6 @@ router.post('/login', async (req,res) => {
         if(!match){
             return res.status(400).json({message: 'Password incorrect'});
         }
-
-        console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
-        console.log('JWT_SECRET length:', process.env.JWT_SECRET?.length);
-        
         const token = jwt.sign(
         {userId: user._id },
         process.env.JWT_SECRET,
