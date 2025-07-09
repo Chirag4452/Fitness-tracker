@@ -42,20 +42,48 @@ router.get('/', authMiddleware, async(req, res) => {
     }
 })
 
-// New route with population example
-router.get('/with-user-info', authMiddleware, async(req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
     try{
-        const activities = await Activity.find({
-            userID: req.user._id
-        }).populate('userID', 'username email'); // Populate userID field, only include username and email
-        
+        const activityId = req.params.id;
+        const activity = await Activity.findById( activityId );
+        if(!activity){
+            return res.status(404).json({message: "Activity not found"});
+        }
+        if(activity.userID != req.user._id){
+            return res.status(403).json({message: 'User does not own the activity'})
+        }
+        const { type, duration, distance, caloriesBurned, location } = req.body;
+        const updatedActivity = await Activity.findByIdAndUpdate( activityId,
+            { type, duration, distance, caloriesBurned, location },
+            { new: true, runValidators: true }
+        );
         res.json({
-            message: "Activities with user info retrieved successfully",
-            activities: activities
+            message: 'Activity updated successfully',
+            activity: updatedActivity
         });
-    } catch (error){
-        res.status(500).json({message: error.message});
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-})
+});
+
+router.delete('/:id', authMiddleware, async (req, res) => {
+    try {
+        const activityId = req.params.id;
+        const activity = await Activity.findById( activityId );
+        if(!activity){
+            return res.status(404).json({message: "Activity not found"});
+        }
+        if(activity.userID != req.user._id){
+            return res.status(403).json({message: 'User does not own the activity'})
+        }
+        const deletedActivity = await Activity.deleteOne( { _id: activityId } );
+        res.json({
+            message: 'Activity deleted successfully',
+            activity: deletedActivity
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
